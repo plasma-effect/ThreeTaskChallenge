@@ -1,6 +1,7 @@
 from balance import Balance
 from simple import SimpleBalance
 from loop import LoopBalance
+from saved import SavedBalance
 import sys
 from typing import List, Tuple
 import random
@@ -41,39 +42,18 @@ class Tester:
                 self.answer[x] + self.answer[y] + self.answer[z] + bias,
             )
         ret = 0.0
+        result = balance.result
         for i in range(len(self.answer)):
-            ret = max(
-                ret, abs(self.answer[i] - balance.result[str(i)]) * self.answer[i]
-            )
+            ret = max(ret, abs(self.answer[i] - result[str(i)]) * self.answer[i])
         return ret
-
-
-def test(
-    answer: List[float], comb: List[Tuple[int, int, int]], balance: Balance
-) -> List[float]:
-    for x, y, z in comb:
-        s = answer[x] + answer[y] + answer[z]
-        balance.update(str(x), str(y), str(z), s)
-    result: List[float] = [0.0 for _ in range(len(answer))]
-    for name, value in balance.result.items():
-        result[int(name)] = value
-    return result
-
-
-def maxdiff(answer: List[float], result: List[float]) -> float:
-    ret = 0.0
-    for i in range(min(len(answer), len(result))):
-        ret = max(ret, abs(answer[i] - result[i]) * answer[i])
-    return ret
 
 
 def main(argv: List[str]):
     size = int(argv[1]) if len(argv) >= 2 else 10
     tester = Tester(size)
-    simple_result = tester.test(SimpleBalance())
-    loop_result = tester.test(LoopBalance())
-    print(f"simple: {simple_result * 100:.3f}%")
-    print(f"  loop: {loop_result * 100:.3f}%")
+    print(f"simple: {tester.test(SimpleBalance()) * 100:.3f}%")
+    print(f"  loop: {tester.test(LoopBalance()) * 100:.3f}%")
+    print(f" saved: {tester.test(SavedBalance()) * 100:.3f}%")
 
 
 if __name__ == "__main__":
